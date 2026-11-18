@@ -30,7 +30,7 @@
 				<form action="${pageContext.request.contextPath}/alunos" method="GET">
 					<div class="input-group h2">
 						<input name="pesquisa" class="form-control" id="search"
-							type="text" placeholder="Pesquisar aulas"
+							type="text" placeholder="Pesquisar alunos"
 							value="${param.pesquisa}"> <span class="input-group-btn">
 							<button class="btn btn-danger" type="submit">
 								<span class="glyphicon glyphicon-search"></span>
