@@ -1,0 +1,139 @@
+DROP DATABASE IF EXISTS crud_manager;
+
+CREATE DATABASE crud_manager;
+
+USE crud_manager;
+
+CREATE TABLE instrutores (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    sexo ENUM('M', 'F') NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    cnh VARCHAR(20) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+CREATE TABLE alunos (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    cpf VARCHAR(14) NOT NULL,
+    categoria ENUM('ACC', 'A', 'B', 'AB', 'C', 'D', 'E') NOT NULL,
+    instrutor_id INT NOT NULL,
+
+    FOREIGN KEY (instrutor_id)
+    REFERENCES instrutores(id)
+);
+
+CREATE TABLE veiculos (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    modelo VARCHAR(100) NOT NULL,
+    placa VARCHAR(10) NOT NULL,
+    ano INT NOT NULL,
+    categoria ENUM('ACC', 'A', 'B', 'C', 'D', 'E') NOT NULL,
+    data_aquisicao DATE NOT NULL,
+    situacao ENUM('Disponível', 'Em manutenção', 'Em uso') NOT NULL,
+    instrutor_id INT NOT NULL,
+
+    FOREIGN KEY (instrutor_id)
+    REFERENCES instrutores(id)
+);
+
+CREATE TABLE aulas (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    data_aula DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    duracao_minutos INT NOT NULL,
+    status ENUM('Agendada', 'Realizada', 'Cancelada') NOT NULL,
+    observacoes TEXT,
+    aluno_id INT NOT NULL,
+    instrutor_id INT NOT NULL,
+    veiculo_id INT NOT NULL,
+
+    FOREIGN KEY (aluno_id) REFERENCES alunos(id),
+    FOREIGN KEY (instrutor_id) REFERENCES instrutores(id),
+    FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)
+);
+
+CREATE TABLE pagamentos (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    valor DECIMAL(10,2) NOT NULL,
+    data_pagamento DATE NOT NULL,
+    forma_pagamento ENUM('Dinheiro', 'Pix', 'Cartão', 'Transferência') NOT NULL,
+    status ENUM('Pendente', 'Pago', 'Cancelado') NOT NULL,
+    descricao TEXT,
+    numero_parcelas INT NOT NULL DEFAULT 1,
+    aluno_id INT NOT NULL,
+
+    FOREIGN KEY (aluno_id) REFERENCES alunos(id)
+);
+
+-- INSTRUTORES
+
+-- senha desse instrutor é 1234
+INSERT INTO instrutores (nome, sexo, email, telefone, cnh, password) VALUES
+('Carlos Silva', 'M', 'carlos@email.com', '35999990001', '12345678901','A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ=');
+
+INSERT INTO instrutores (nome, sexo, email, telefone, cnh) VALUES
+('Ana Souza', 'F', 'ana@email.com', '35999990002', '12345678902'),
+('Roberto Lima', 'M', 'roberto@email.com', '35999990003', '12345678903'),
+('Mariana Costa', 'F', 'mariana@email.com', '35999990004', '12345678904'),
+('Pedro Santos', 'M', 'pedro@email.com', '35999990005', '12345678905');
+
+-- ALUNOS
+INSERT INTO alunos
+(nome, data_nascimento, cpf, categoria, instrutor_id) VALUES
+('João Oliveira', '2000-05-10', '123.456.789-01', 'B', 1),
+('Maria Ferreira', '1998-08-15', '234.567.890-12', 'A', 2),
+('Lucas Almeida', '2002-03-20', '345.678.901-23', 'AB', 3),
+('Fernanda Rocha', '1995-11-25', '456.789.012-34', 'C', 4),
+('Gabriel Martins', '2001-07-30', '567.890.123-45', 'D', 5);
+
+-- VEÍCULOS
+INSERT INTO veiculos
+(modelo, placa, ano, categoria, data_aquisicao, situacao, instrutor_id) VALUES
+('Honda CG 160', 'ABC1D23', 2023, 'A', '2023-01-10', 'Disponível', 1),
+('Fiat Argo', 'DEF2G34', 2022, 'B', '2022-05-15', 'Disponível', 2),
+('Volkswagen Delivery', 'GHI3J45', 2021, 'C', '2021-08-20', 'Em uso', 3),
+('Mercedes-Benz Sprinter', 'JKL4M56', 2020, 'D', '2020-03-12', 'Disponível', 4),
+('Volvo FH', 'MNO5P67', 2022, 'E', '2022-09-18', 'Em manutenção', 5);
+
+-- AULAS
+INSERT INTO aulas
+(data_aula, hora_inicio, duracao_minutos, status, observacoes,
+ aluno_id, instrutor_id, veiculo_id)
+VALUES
+('2026-11-10', '08:00:00', 50, 'Agendada',
+ 'Primeira aula prática do aluno.', 1, 1, 1),
+
+('2026-11-10', '09:00:00', 50, 'Agendada',
+ 'Treinamento de estacionamento.', 2, 2, 2),
+
+('2026-11-08', '10:00:00', 50, 'Realizada',
+ 'Aula de controle do veículo.', 3, 1, 3),
+
+('2026-11-07', '14:00:00', 50, 'Realizada',
+ 'Aula de direção em via urbana.', 1, 2, 1),
+
+('2026-11-12', '15:00:00', 50, 'Cancelada',
+ 'Aula cancelada pelo aluno.', 2, 3, 2);
+ 
+-- PAGAMENTOS
+ INSERT INTO pagamentos
+(valor, data_pagamento, forma_pagamento, status,
+ descricao, numero_parcelas, aluno_id)
+VALUES
+(450.00, '2026-11-01', 'Pix', 'Pago',
+ 'Pagamento referente à matrícula.', 1, 1),
+
+(300.00, '2026-11-02', 'Cartão', 'Pago',
+ 'Pagamento das aulas práticas.', 3, 2),
+
+(150.00, '2026-11-03', 'Dinheiro', 'Pendente',
+ 'Pagamento de aulas adicionais.', 1, 3),
+
+(600.00, '2026-11-05', 'Transferência', 'Pago',
+ 'Pagamento do pacote de aulas.', 2, 1),
+
+(250.00, '2026-11-06', 'Pix', 'Pendente',
+ 'Pagamento complementar.', 1, 2);

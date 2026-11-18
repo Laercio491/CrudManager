@@ -1,0 +1,177 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <%@include file="base-head.jsp"%>
+    <title>Sistema Autoescola - Pagamentos</title>
+</head>
+
+<body>
+
+    <%@include file="modal.html"%>
+    <%@include file="nav-menu.jsp"%>
+
+    <div id="container" class="container-fluid">
+
+        <div id="alert"
+             style="${not empty message ? 'display: block;' : 'display: none;'}"
+             class="alert alert-dismissable ${alertType eq 1 ? 'alert-success' : 'alert-danger'}">
+
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            ${message}
+        </div>
+
+        <div id="top" class="row">
+
+            <div class="col-md-3">
+                <h3>Pagamentos</h3>
+            </div>
+
+            <div class="col-md-6">
+				<form action="${pageContext.request.contextPath}/pagamentos" method="GET">
+					<div class="input-group h2">
+						<input name="pesquisa" class="form-control" id="search"
+							type="text" placeholder="Pesquisar aulas"
+							value="${param.pesquisa}"> <span class="input-group-btn">
+							<button class="btn btn-danger" type="submit">
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+						</span>
+					</div>
+				</form>
+			</div>
+
+            <div class="col-md-3">
+                <a href="${pageContext.request.contextPath}/pagamento/form"
+                   class="btn btn-danger pull-right h2">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;Adicionar Pagamento
+                </a>
+            </div>
+
+        </div>
+
+        <hr />
+
+        <div id="list" class="row">
+            <div class="table-responsive col-md-12">
+
+                <table class="table table-striped table-hover" cellspacing="0" cellpadding="0">
+
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Valor</th>
+                            <th>Data do pagamento</th>
+                            <th>Forma de pagamento</th>
+                            <th>Status</th>
+                            <th>Descrição</th>
+                            <th>Parcelas</th>
+                            <th>Editar</th>
+                            <th>Excluir</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <c:forEach var="pagamento" items="${pagamentos}">
+                            <tr>
+                                <td>${pagamento.getAluno().getNome()}</td>
+                                <td>R$ ${pagamento.getValor()}</td>
+                                <td>${pagamento.getDataPagamento()}</td>
+                                <td>${pagamento.getFormaPagamento()}</td>
+                                <td>${pagamento.getStatus()}</td>
+                                <td>${pagamento.getDescricao()}</td>
+                                <td>${pagamento.getNumeroParcelas()}</td>
+
+                                <td class="actions">
+                                    <a class="btn btn-info btn-xs"
+                                       href="${pageContext.request.contextPath}/pagamento/update?pagamentoId=${pagamento.getId()}">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                    </a>
+                                </td>
+
+                                <td class="actions">
+                                    <a class="btn btn-danger btn-xs modal-remove"
+                                       pagamento-id="${pagamento.getId()}"
+                                       pagamento-aluno="${pagamento.getAluno().getNome()}"
+                                       data-toggle="modal"
+                                       data-target="#delete-modal"
+                                       href="#">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <div id="bottom" class="row">
+    <div class="col-md-12">
+        <ul class="pagination">
+
+            <c:choose>
+                <c:when test="${paginaAtual > 1}">
+                    <li>
+                        <a href="${pageContext.request.contextPath}/pagamentos?pagina=${paginaAtual - 1}">
+                            &lt; Anterior
+                        </a>
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="disabled"><a>&lt; Anterior</a></li>
+                </c:otherwise>
+            </c:choose>
+
+            <c:forEach begin="1" end="${totalPaginas}" var="p">
+                <li class="${p == paginaAtual ? 'active' : ''}">
+                    <a href="${pageContext.request.contextPath}/pagamentos?pagina=${p}">
+                        ${p}
+                    </a>
+                </li>
+            </c:forEach>
+
+            <c:choose>
+                <c:when test="${paginaAtual < totalPaginas}">
+                    <li class="next">
+                        <a href="${pageContext.request.contextPath}/pagamentos?pagina=${paginaAtual + 1}" rel="next">
+                            Próximo &gt;
+                        </a>
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="disabled"><a>Próximo &gt;</a></li>
+                </c:otherwise>
+            </c:choose>
+
+    </div>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            setTimeout(function() {
+                $("#alert").slideUp(500);
+            }, 3000);
+
+            $(".modal-remove").click(function () {
+
+                var alunoNome = $(this).attr('pagamento-aluno');
+                var pagamentoId = $(this).attr('pagamento-id');
+
+                $(".modal-body #hiddenValue").text("o pagamento do aluno '" + alunoNome + "'");
+                $("#id").attr("value", pagamentoId);
+                $("#form").attr("action", "pagamento/delete");
+            });
+
+        });
+    </script>
+
+</body>
+</html>
