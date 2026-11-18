@@ -135,7 +135,7 @@ public class MySQLPagamentoDAO implements PagamentoDAO {
 	public List<Pagamento> search(String pesquisa) throws ModelException {
 	    List<Pagamento> pagamentos = new ArrayList<>();
 
-	    String sql = "SELECT pagamentos.* FROM pagamentos "
+	    String sql = "SELECT * FROM pagamentos "
 	               + "INNER JOIN alunos ON pagamentos.aluno_id = alunos.id "
 	               + "WHERE alunos.nome LIKE ? "
 	               + "ORDER BY alunos.nome ASC";

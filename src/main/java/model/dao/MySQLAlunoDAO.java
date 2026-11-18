@@ -130,7 +130,7 @@ public class MySQLAlunoDAO implements AlunoDAO {
 	public List<Aluno> search(String pesquisa) throws ModelException {
 	    List<Aluno> alunos = new ArrayList<>();
 
-	    String sql = "SELECT alunos.* FROM alunos "
+	    String sql = "SELECT * FROM alunos "
 	               + "WHERE alunos.nome LIKE ? "
 	               + "ORDER BY alunos.nome ASC";
 

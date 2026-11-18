@@ -144,7 +144,7 @@ public class MySQLAulaDAO implements AulaDAO {
 	public List<Aula> searchByAluno(String pesquisa) throws ModelException {
 	    List<Aula> aulas = new ArrayList<>();
 
-	    String sql = "SELECT aulas.* FROM aulas "
+	    String sql = "SELECT * FROM aulas "
 	               + "INNER JOIN alunos ON aulas.aluno_id = alunos.id "
 	               + "WHERE alunos.nome LIKE ? "
 	               + "ORDER BY alunos.nome ASC";
